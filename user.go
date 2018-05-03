@@ -60,6 +60,7 @@ func GetCurrentUserWithPassword(ses *mongo.Session, req *http.Request) (*entity.
 }
 
 func GetCurrentUserEmail(req *http.Request) (string, error) {
+	// FIXME: token is not used, we should use the token to load the actual user.
 	token := req.Header.Get("Authorization")
 	if len(token) == 0 {
 		return "", fmt.Errorf("Authorization token is missing.")
