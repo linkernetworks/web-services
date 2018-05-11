@@ -15,7 +15,12 @@ import (
 const SessionKey = "ses"
 
 func GetCurrentUserRestful(ses *mongo.Session, req *restful.Request) (*entity.User, error) {
-	return GetCurrentUser(ses, req.Request)
+	token := req.Request.Header.Get("Authorization")
+	if len(token) == 0 {
+		return GetCurrentUser(ses, req.Request)
+	}
+
+	return GetCurrentUserByToken(ses, token)
 }
 
 // GetCurrentUser get current user data with login session and return user data
@@ -28,6 +33,22 @@ func GetCurrentUser(ses *mongo.Session, req *http.Request) (*entity.User, error)
 
 	user := entity.User{}
 	q := bson.M{"email": email}
+	projection := bson.M{"password": 0}
+	if err := ses.C(entity.UserCollectionName).Find(q).Select(projection).One(&user); err != nil {
+		if err == mgo.ErrNotFound {
+			return nil, fmt.Errorf("user document not found.")
+		}
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+// GetCurrentUserByToken get current user data with login token and return user data
+// excluding sensitive data like password.
+func GetCurrentUserByToken(ses *mongo.Session, token string) (*entity.User, error) {
+	user := entity.User{}
+	q := bson.M{"access_token": token}
 	projection := bson.M{"password": 0}
 	if err := ses.C(entity.UserCollectionName).Find(q).Select(projection).One(&user); err != nil {
 		if err == mgo.ErrNotFound {
@@ -60,12 +81,6 @@ func GetCurrentUserWithPassword(ses *mongo.Session, req *http.Request) (*entity.
 }
 
 func GetCurrentUserEmail(req *http.Request) (string, error) {
-	// FIXME: token is not used, we should use the token to load the actual user.
-	token := req.Header.Get("Authorization")
-	if len(token) == 0 {
-		return "", fmt.Errorf("Authorization token is missing.")
-	}
-
 	session, err := session.Service.Store.Get(req, SessionKey)
 	if err != nil {
 		return "", err
