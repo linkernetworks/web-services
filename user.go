@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"bitbucket.org/linkernetworks/aurora/src/entity"
-	"bitbucket.org/linkernetworks/aurora/src/service/mongo"
+	"github.com/linkernetworks/mongo"
 	"bitbucket.org/linkernetworks/aurora/src/service/session"
 	restful "github.com/emicklei/go-restful"
 	mgo "gopkg.in/mgo.v2"
