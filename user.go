@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	oauth "github.com/linkernetworks/oauth/entity"
-	"bitbucket.org/linkernetworks/aurora/src/service/session"
 	restful "github.com/emicklei/go-restful"
 	"github.com/linkernetworks/mongo"
+	oauth "github.com/linkernetworks/oauth/entity"
+	"github.com/linkernetworks/session"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
