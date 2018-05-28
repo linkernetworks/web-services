@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	oauth "bitbucket.org/linkernetworks/aurora/src/oauth/entity"
+	oauth "github.com/linkernetworks/oauth/entity"
 	"bitbucket.org/linkernetworks/aurora/src/service/session"
 	restful "github.com/emicklei/go-restful"
 	"github.com/linkernetworks/mongo"
