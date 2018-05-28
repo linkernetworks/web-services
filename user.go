@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"net/http"
 
-	"bitbucket.org/linkernetworks/aurora/src/entity"
-	"github.com/linkernetworks/mongo"
+	oauth "bitbucket.org/linkernetworks/aurora/src/oauth/entity"
 	"bitbucket.org/linkernetworks/aurora/src/service/session"
 	restful "github.com/emicklei/go-restful"
+	"github.com/linkernetworks/mongo"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
 const SessionKey = "ses"
 
-func GetCurrentUserRestful(ses *mongo.Session, req *restful.Request) (*entity.User, error) {
+func GetCurrentUserRestful(ses *mongo.Session, req *restful.Request) (*oauth.User, error) {
 	token := req.Request.Header.Get("Authorization")
 	if len(token) == 0 {
 		return GetCurrentUser(ses, req.Request)
@@ -25,16 +25,16 @@ func GetCurrentUserRestful(ses *mongo.Session, req *restful.Request) (*entity.Us
 
 // GetCurrentUser get current user data with login session and return user data
 // excluding sensitive data like password.
-func GetCurrentUser(ses *mongo.Session, req *http.Request) (*entity.User, error) {
+func GetCurrentUser(ses *mongo.Session, req *http.Request) (*oauth.User, error) {
 	email, err := GetCurrentUserEmail(req)
 	if err != nil {
 		return nil, err
 	}
 
-	user := entity.User{}
+	user := oauth.User{}
 	q := bson.M{"email": email}
 	projection := bson.M{"password": 0}
-	if err := ses.C(entity.UserCollectionName).Find(q).Select(projection).One(&user); err != nil {
+	if err := ses.C(oauth.UserCollectionName).Find(q).Select(projection).One(&user); err != nil {
 		if err == mgo.ErrNotFound {
 			return nil, fmt.Errorf("user document not found.")
 		}
@@ -46,11 +46,11 @@ func GetCurrentUser(ses *mongo.Session, req *http.Request) (*entity.User, error)
 
 // GetCurrentUserByToken get current user data with login token and return user data
 // excluding sensitive data like password.
-func GetCurrentUserByToken(ses *mongo.Session, token string) (*entity.User, error) {
-	user := entity.User{}
+func GetCurrentUserByToken(ses *mongo.Session, token string) (*oauth.User, error) {
+	user := oauth.User{}
 	q := bson.M{"access_token": token}
 	projection := bson.M{"password": 0}
-	if err := ses.C(entity.UserCollectionName).Find(q).Select(projection).One(&user); err != nil {
+	if err := ses.C(oauth.UserCollectionName).Find(q).Select(projection).One(&user); err != nil {
 		if err == mgo.ErrNotFound {
 			return nil, fmt.Errorf("user document not found.")
 		}
@@ -62,15 +62,15 @@ func GetCurrentUserByToken(ses *mongo.Session, token string) (*entity.User, erro
 
 // GetCurrentUserWithPassword get current user data with login session and return all user data
 // including sensitive data like encrypted password.
-func GetCurrentUserWithPassword(ses *mongo.Session, req *http.Request) (*entity.User, error) {
+func GetCurrentUserWithPassword(ses *mongo.Session, req *http.Request) (*oauth.User, error) {
 	email, err := GetCurrentUserEmail(req)
 	if err != nil {
 		return nil, err
 	}
 
-	user := entity.User{}
+	user := oauth.User{}
 	q := bson.M{"email": email}
-	if err := ses.C(entity.UserCollectionName).Find(q).One(&user); err != nil {
+	if err := ses.C(oauth.UserCollectionName).Find(q).One(&user); err != nil {
 		if err == mgo.ErrNotFound {
 			return nil, fmt.Errorf("user document not found.")
 		}
