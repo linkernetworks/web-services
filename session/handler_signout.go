@@ -1,11 +1,11 @@
-package server
+package session
 
 import (
 	"net/http"
 
+	"bitbucket.org/linkernetworks/aurora/src/web"
 	"github.com/linkernetworks/logger"
 	"github.com/linkernetworks/session"
-	"bitbucket.org/linkernetworks/aurora/src/web"
 )
 
 func SignOutUserHandler(ctx *web.Context) {
