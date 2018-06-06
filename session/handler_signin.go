@@ -24,7 +24,7 @@ func SignInUserHandler(ctx *web.Context) {
 
 	form := oauth.User{}
 	if err := req.ReadEntity(&form); err != nil {
-		response.BadRequest(req.Request, resp, err)
+		response.BadRequest(req.Request, resp.ResponseWriter, err)
 		return
 	}
 
@@ -39,7 +39,7 @@ func SignInUserHandler(ctx *web.Context) {
 	}
 	if validations.HasError() {
 		logger.Error(err)
-		response.BadRequest(req.Request, resp, err)
+		response.BadRequest(req.Request, resp.ResponseWriter, err)
 		return
 	}
 
@@ -50,7 +50,7 @@ func SignInUserHandler(ctx *web.Context) {
 	logger.Debug(as.Config.Oauth.Encryption)
 	password, err := pwdutil.EncryptPasswordLegacy(form.Password)
 	if err != nil {
-		response.BadRequest(req.Request, resp, err)
+		response.BadRequest(req.Request, resp.ResponseWriter, err)
 		return
 	}
 	query := bson.M{"email": form.Email, "password": password}
@@ -58,10 +58,10 @@ func SignInUserHandler(ctx *web.Context) {
 	user := oauth.User{}
 	if err := session.FindOne(oauth.UserCollectionName, query, &user); err != nil {
 		if err == mgo.ErrNotFound {
-			response.Forbidden(req.Request, resp, ErrInvalidUsernameOrPassword)
+			response.Forbidden(req.Request, resp.ResponseWriter, ErrInvalidUsernameOrPassword)
 			return
 		} else {
-			response.Forbidden(req.Request, resp, err)
+			response.Forbidden(req.Request, resp.ResponseWriter, err)
 			return
 		}
 	}
@@ -73,7 +73,7 @@ func SignInUserHandler(ctx *web.Context) {
 
 	token, err := SignIn(req.Request, resp.ResponseWriter, &user)
 	if err != nil {
-		response.InternalServerError(req.Request, resp, err)
+		response.InternalServerError(req.Request, resp.ResponseWriter, err)
 		return
 	}
 
@@ -86,10 +86,10 @@ func SignInUserHandler(ctx *web.Context) {
 	if err := session.C(oauth.UserCollectionName).Update(query, modifier); err != nil {
 		logger.Error(err)
 		if err == mgo.ErrNotFound {
-			response.NotFound(req.Request, resp, err)
+			response.NotFound(req.Request, resp.ResponseWriter, err)
 			return
 		}
-		response.InternalServerError(req.Request, resp, err)
+		response.InternalServerError(req.Request, resp.ResponseWriter, err)
 		return
 	}
 

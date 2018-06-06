@@ -20,7 +20,7 @@ func SignUpUserHandler(ctx *web.Context) {
 	user := oauth.User{}
 	if err := req.ReadEntity(&user); err != nil {
 		logger.Error(err)
-		response.BadRequest(req.Request, resp, err)
+		response.BadRequest(req.Request, resp.ResponseWriter, err)
 		return
 	}
 
@@ -48,7 +48,7 @@ func SignUpUserHandler(ctx *web.Context) {
 	if err := session.FindOne(oauth.UserCollectionName, query, &existedUser); err != nil {
 		if err.Error() != mgo.ErrNotFound.Error() {
 			logger.Error(err)
-			response.InternalServerError(req.Request, resp, err)
+			response.InternalServerError(req.Request, resp.ResponseWriter, err)
 			return
 		}
 	}
@@ -76,7 +76,7 @@ func SignUpUserHandler(ctx *web.Context) {
 	user.Password, err = pwdutil.EncryptPasswordLegacy(user.Password)
 	if err != nil {
 		logger.Error(err)
-		response.InternalServerError(req.Request, resp, err)
+		response.InternalServerError(req.Request, resp.ResponseWriter, err)
 		return
 	}
 	user.CreatedAt = util.GetCurrentTimestamp()
@@ -86,7 +86,7 @@ func SignUpUserHandler(ctx *web.Context) {
 
 	if err := session.Insert(oauth.UserCollectionName, &user); err != nil {
 		logger.Error(err)
-		response.InternalServerError(req.Request, resp, err)
+		response.InternalServerError(req.Request, resp.ResponseWriter, err)
 		return
 	}
 	resp.WriteEntity(ActionResponse{
