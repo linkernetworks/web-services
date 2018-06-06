@@ -2,8 +2,9 @@ package session
 
 import (
 	"errors"
-	"net/http"
+	"fmt"
 
+	"bitbucket.org/linkernetworks/aurora/src/net/http/response"
 	"bitbucket.org/linkernetworks/aurora/src/pwdutil"
 	"bitbucket.org/linkernetworks/aurora/src/web"
 	"github.com/linkernetworks/logger"
@@ -23,7 +24,7 @@ func SignInUserHandler(ctx *web.Context) {
 
 	form := oauth.User{}
 	if err := req.ReadEntity(&form); err != nil {
-		responseErrorWithStatus(resp, http.StatusBadRequest, err.Error())
+		response.BadRequest(req.Request, resp, err)
 		return
 	}
 
@@ -38,7 +39,7 @@ func SignInUserHandler(ctx *web.Context) {
 	}
 	if validations.HasError() {
 		logger.Error(err)
-		responseErrorWithStatus(resp, http.StatusBadRequest, err.Error())
+		response.BadRequest(req.Request, resp, err)
 		return
 	}
 
@@ -49,7 +50,7 @@ func SignInUserHandler(ctx *web.Context) {
 	logger.Debug(as.Config.Oauth.Encryption)
 	password, err := pwdutil.EncryptPasswordLegacy(form.Password)
 	if err != nil {
-		responseErrorWithStatus(resp, http.StatusBadRequest, err.Error())
+		response.BadRequest(req.Request, resp, err)
 		return
 	}
 	query := bson.M{"email": form.Email, "password": password}
@@ -57,25 +58,22 @@ func SignInUserHandler(ctx *web.Context) {
 	user := oauth.User{}
 	if err := session.FindOne(oauth.UserCollectionName, query, &user); err != nil {
 		if err == mgo.ErrNotFound {
-			responseErrorWithStatus(resp, http.StatusForbidden, ErrInvalidUsernameOrPassword.Error())
+			response.Forbidden(req.Request, resp, ErrInvalidUsernameOrPassword)
 			return
 		} else {
-			responseErrorWithStatus(resp, http.StatusForbidden, err.Error())
+			response.Forbidden(req.Request, resp, err)
 			return
 		}
 	}
 
 	if user.Revoked {
-		resp.WriteHeaderAndEntity(http.StatusForbidden, SignInResponse{
-			Error:   true,
-			Message: "This user has been revoked",
-		})
+		response.Forbidden(req.Request, resp, fmt.Errorf("This user has been revoked."))
 		return
 	}
 
 	token, err := SignIn(req.Request, resp.ResponseWriter, &user)
 	if err != nil {
-		responseErrorWithStatus(resp, http.StatusInternalServerError, err.Error())
+		response.InternalServerError(req.Request, resp, err)
 		return
 	}
 
@@ -88,10 +86,10 @@ func SignInUserHandler(ctx *web.Context) {
 	if err := session.C(oauth.UserCollectionName).Update(query, modifier); err != nil {
 		logger.Error(err)
 		if err == mgo.ErrNotFound {
-			responseErrorWithStatus(resp, http.StatusNotFound, err.Error())
+			response.NotFound(req.Request, resp, err)
 			return
 		}
-		responseErrorWithStatus(resp, http.StatusInternalServerError, err.Error())
+		response.InternalServerError(req.Request, resp, err)
 		return
 	}
 

@@ -3,6 +3,7 @@ package session
 import (
 	"net/http"
 
+	"bitbucket.org/linkernetworks/aurora/src/net/http/response"
 	"bitbucket.org/linkernetworks/aurora/src/pwdutil"
 	"bitbucket.org/linkernetworks/aurora/src/validator"
 	"bitbucket.org/linkernetworks/aurora/src/web"
@@ -19,7 +20,7 @@ func SignUpUserHandler(ctx *web.Context) {
 	user := oauth.User{}
 	if err := req.ReadEntity(&user); err != nil {
 		logger.Error(err)
-		responseErrorWithStatus(resp, http.StatusBadRequest, err.Error())
+		response.BadRequest(req.Request, resp, err)
 		return
 	}
 
@@ -47,7 +48,7 @@ func SignUpUserHandler(ctx *web.Context) {
 	if err := session.FindOne(oauth.UserCollectionName, query, &existedUser); err != nil {
 		if err.Error() != mgo.ErrNotFound.Error() {
 			logger.Error(err)
-			responseErrorWithStatus(resp, http.StatusInternalServerError, err.Error())
+			response.InternalServerError(req.Request, resp, err)
 			return
 		}
 	}
@@ -75,7 +76,7 @@ func SignUpUserHandler(ctx *web.Context) {
 	user.Password, err = pwdutil.EncryptPasswordLegacy(user.Password)
 	if err != nil {
 		logger.Error(err)
-		responseErrorWithStatus(resp, http.StatusInternalServerError, err.Error())
+		response.InternalServerError(req.Request, resp, err)
 		return
 	}
 	user.CreatedAt = util.GetCurrentTimestamp()
@@ -85,7 +86,7 @@ func SignUpUserHandler(ctx *web.Context) {
 
 	if err := session.Insert(oauth.UserCollectionName, &user); err != nil {
 		logger.Error(err)
-		responseErrorWithStatus(resp, http.StatusInternalServerError, err.Error())
+		response.InternalServerError(req.Request, resp, err)
 		return
 	}
 	resp.WriteEntity(ActionResponse{
