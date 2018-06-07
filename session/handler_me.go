@@ -2,7 +2,7 @@ package session
 
 import (
 	"bitbucket.org/linkernetworks/aurora/src/acl"
-	"bitbucket.org/linkernetworks/aurora/src/net/http/response"
+	"bitbucket.org/linkernetworks/aurora/src/net/http"
 	"bitbucket.org/linkernetworks/aurora/src/web"
 	"github.com/linkernetworks/session"
 
@@ -15,7 +15,7 @@ func GetMeHandler(ctx *web.Context) {
 	token := req.Request.Header.Get("Authorization")
 	session, err := session.Service.Store.Get(req.Request, SessionKey)
 	if err != nil {
-		response.InternalServerError(req.Request, resp.ResponseWriter, err)
+		http.InternalServerError(req.Request, resp.ResponseWriter, err)
 		return
 	}
 
@@ -25,10 +25,10 @@ func GetMeHandler(ctx *web.Context) {
 	user, err := acl.GetCurrentUserRestful(ses, req)
 	if err != nil {
 		if err == mgo.ErrNotFound {
-			response.NotFound(req.Request, resp, err)
+			http.NotFound(req.Request, resp, err)
 			return
 		}
-		response.InternalServerError(req.Request, resp, err)
+		http.InternalServerError(req.Request, resp, err)
 		return
 	}
 	resp.WriteEntity(SessionResponse{
