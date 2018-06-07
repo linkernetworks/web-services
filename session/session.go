@@ -2,11 +2,14 @@ package session
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"time"
 
+	"bitbucket.org/linkernetworks/aurora/src/net/http/response"
 	"bitbucket.org/linkernetworks/aurora/src/validator"
+	restful "github.com/emicklei/go-restful"
 	oauth "github.com/linkernetworks/oauth/entity"
 	"github.com/linkernetworks/session"
 
@@ -38,23 +41,41 @@ type SessionResponse struct {
 	CurrentUser oauth.User `json:"currentUser,omitempty"`
 }
 
-// func NewLoginService(sp *serviceprovider.Container) *restful.WebService {
-// 	ws := new(restful.WebService)
-// 	ws.Path("/v1").Consumes(restful.MIME_JSON, restful.MIME_JSON).Produces(restful.MIME_JSON, restful.MIME_JSON)
-// 	ws.Route(ws.GET("/me").Filter(sessionAuthenticationFilter).To(RESTfulServiceHandler(sp, GetMeHandler)))
-// 	ws.Route(ws.POST("/email/check").To(RESTfulServiceHandler(sp, CheckEmailAvailability)))
-// 	ws.Route(ws.POST("/signup").To(RESTfulServiceHandler(sp, SignUpUserHandler)))
-// 	ws.Route(ws.POST("/signin").To(RESTfulServiceHandler(sp, SignInUserHandler)))
-// 	ws.Route(ws.GET("/signout").Filter(sessionAuthenticationFilter).To(RESTfulServiceHandler(sp, SignOutUserHandler)))
-// 	return ws
-// }
-
 func AllocateNewSessionToken() uuid.UUID {
 	return uuid.NewV4()
 }
 
 func GetSession(req *http.Request) (*sessions.Session, error) {
 	return session.Service.Store.Get(req, SessionKey)
+}
+
+// Pre-Handler user session authentication
+func SessionAuthenticationFilter(req *restful.Request, resp *restful.Response, chain *restful.FilterChain) {
+
+	sess, err := session.Service.Store.Get(req.Request, SessionKey)
+	if err != nil {
+		msg := fmt.Errorf("Redis get auth token failed: %v", err)
+		response.InternalServerError(req.Request, resp.ResponseWriter, msg)
+		return
+	}
+
+	if !isExpired(sess) {
+		//refresh
+		sess.Values["expiredAt"] = time.Now().Add(24 * time.Hour).Unix()
+		if err := sess.Save(req.Request, resp); err != nil {
+			response.InternalServerError(req.Request, resp.ResponseWriter, fmt.Errorf("Redis save auth token failed: %v", err))
+			return
+		}
+		chain.ProcessFilter(req, resp)
+		return
+	}
+
+	resp.WriteHeaderAndEntity(http.StatusForbidden, SignInResponse{
+		Error:     true,
+		Message:   "Unauthorized. Redirect to signin page",
+		SignInUrl: "/signin",
+	})
+	return
 }
 
 func RegisterUserSession(req *http.Request, resp http.ResponseWriter, ses *sessions.Session, u *oauth.User) error {
@@ -80,4 +101,12 @@ func SignIn(req *http.Request, resp http.ResponseWriter, user *oauth.User) (uuid
 		return token, err
 	}
 	return token, RegisterUserSession(req, resp, ses, user)
+}
+
+func isExpired(sess *sessions.Session) bool {
+	expiredAt := sess.Values["expiredAt"]
+	if expiredAt == nil {
+		return true
+	}
+	return expiredAt.(int64) < time.Now().Unix()
 }
