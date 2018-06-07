@@ -1,4 +1,4 @@
-package session
+package usersession
 
 import (
 	"bitbucket.org/linkernetworks/aurora/src/aurora/serviceprovider"
