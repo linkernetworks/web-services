@@ -38,6 +38,17 @@ type SessionResponse struct {
 	CurrentUser oauth.User `json:"currentUser,omitempty"`
 }
 
+// func NewLoginService(sp *serviceprovider.Container) *restful.WebService {
+// 	ws := new(restful.WebService)
+// 	ws.Path("/v1").Consumes(restful.MIME_JSON, restful.MIME_JSON).Produces(restful.MIME_JSON, restful.MIME_JSON)
+// 	ws.Route(ws.GET("/me").Filter(sessionAuthenticationFilter).To(RESTfulServiceHandler(sp, GetMeHandler)))
+// 	ws.Route(ws.POST("/email/check").To(RESTfulServiceHandler(sp, CheckEmailAvailability)))
+// 	ws.Route(ws.POST("/signup").To(RESTfulServiceHandler(sp, SignUpUserHandler)))
+// 	ws.Route(ws.POST("/signin").To(RESTfulServiceHandler(sp, SignInUserHandler)))
+// 	ws.Route(ws.GET("/signout").Filter(sessionAuthenticationFilter).To(RESTfulServiceHandler(sp, SignOutUserHandler)))
+// 	return ws
+// }
+
 func AllocateNewSessionToken() uuid.UUID {
 	return uuid.NewV4()
 }
