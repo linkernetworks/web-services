@@ -7,7 +7,7 @@ import (
 
 	"time"
 
-	response "bitbucket.org/linkernetworks/aurora/src/net/http"
+	response "github.com/linkernetworks/net/http"
 	"bitbucket.org/linkernetworks/aurora/src/validator"
 	restful "github.com/emicklei/go-restful"
 	oauth "github.com/linkernetworks/oauth/entity"

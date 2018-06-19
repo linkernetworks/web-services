@@ -3,7 +3,7 @@ package usersession
 import (
 	"net/http"
 
-	response "bitbucket.org/linkernetworks/aurora/src/net/http"
+	response "github.com/linkernetworks/net/http"
 	"bitbucket.org/linkernetworks/aurora/src/pwdutil"
 	"bitbucket.org/linkernetworks/aurora/src/validator"
 	"bitbucket.org/linkernetworks/aurora/src/web"

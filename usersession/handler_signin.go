@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"bitbucket.org/linkernetworks/aurora/src/net/http"
+	"github.com/linkernetworks/net/http"
 	"bitbucket.org/linkernetworks/aurora/src/pwdutil"
 	"bitbucket.org/linkernetworks/aurora/src/web"
 	"github.com/linkernetworks/logger"
