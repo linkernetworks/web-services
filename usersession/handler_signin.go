@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/linkernetworks/net/http"
 	"bitbucket.org/linkernetworks/aurora/src/pwdutil"
 	"bitbucket.org/linkernetworks/aurora/src/web"
 	"github.com/linkernetworks/logger"
+	"github.com/linkernetworks/net/http"
 	oauth "github.com/linkernetworks/oauth/entity"
 	"github.com/linkernetworks/oauth/util"
 	"github.com/linkernetworks/oauth/validator"
@@ -47,7 +47,6 @@ func SignInUserHandler(ctx *web.Context) {
 	defer session.Close()
 
 	// get user from db
-	logger.Debug(as.Config.Oauth.Encryption)
 	password, err := pwdutil.EncryptPasswordLegacy(form.Password)
 	if err != nil {
 		http.BadRequest(req.Request, resp.ResponseWriter, err)
