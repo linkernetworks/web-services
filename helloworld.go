@@ -1,0 +1,5 @@
+package webservices
+
+func HelloWorld() {
+
+}
