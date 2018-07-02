@@ -1,0 +1,28 @@
+language: go
+
+sudo: required
+
+services:
+  - mongodb
+
+go:
+  - "1.10.x"
+
+cache:
+  directories:
+  - vendor/github.com
+  - vendor/golang.org
+  - vendor/gopkg.in
+
+before_install:
+  - go get -u github.com/kardianos/govendor
+
+install:
+  - make pre-build
+
+script:
+  - make build test
+
+after_success:
+  - cp build/src/coverage.txt coverage.txt
+  - bash <(curl -s https://codecov.io/bash)

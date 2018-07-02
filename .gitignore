@@ -10,3 +10,11 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+coverage.html
+coverage.txt
+
+# vendors
+vendor/*
+!vendor/vendor.json
+
+***/logs/*
