@@ -1,5 +1,0 @@
-package webservices
-
-func HelloWorld() {
-
-}
