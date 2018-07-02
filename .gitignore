@@ -12,3 +12,9 @@
 *.out
 coverage.html
 coverage.txt
+
+# vendors
+vendor/*
+!vendor/vendor.json
+
+***/logs/*
