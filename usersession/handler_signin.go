@@ -4,13 +4,13 @@ import (
 	"errors"
 	"fmt"
 
-	"bitbucket.org/linkernetworks/aurora/src/pwdutil"
-	"bitbucket.org/linkernetworks/aurora/src/web"
 	"github.com/linkernetworks/logger"
 	"github.com/linkernetworks/net/http"
 	oauth "github.com/linkernetworks/oauth/entity"
 	"github.com/linkernetworks/oauth/util"
 	"github.com/linkernetworks/oauth/validator"
+	"github.com/linkernetworks/web-services/pwdutil"
+	"github.com/linkernetworks/web-services/web"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -47,7 +47,8 @@ func SignInUserHandler(ctx *web.Context) {
 	defer session.Close()
 
 	// get user from db
-	password, err := pwdutil.EncryptPasswordLegacy(form.Password)
+	password, err := pwdutil.EncryptPasswordLegacy(form.Password, ctx.ServiceProvider.Config.PassSalt)
+
 	if err != nil {
 		http.BadRequest(req.Request, resp.ResponseWriter, err)
 		return

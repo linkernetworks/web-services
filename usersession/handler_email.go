@@ -5,12 +5,12 @@ import (
 
 	"fmt"
 
-	response "github.com/linkernetworks/net/http"
-	"bitbucket.org/linkernetworks/aurora/src/validator"
-	"bitbucket.org/linkernetworks/aurora/src/web"
 	"github.com/linkernetworks/logger"
 	"github.com/linkernetworks/mongo"
+	response "github.com/linkernetworks/net/http"
 	oauth "github.com/linkernetworks/oauth/entity"
+	"github.com/linkernetworks/validator"
+	"github.com/linkernetworks/web-services/web"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

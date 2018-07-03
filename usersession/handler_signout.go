@@ -3,10 +3,10 @@ package usersession
 import (
 	"net/http"
 
-	response "github.com/linkernetworks/net/http"
-	"bitbucket.org/linkernetworks/aurora/src/web"
 	"github.com/linkernetworks/logger"
+	response "github.com/linkernetworks/net/http"
 	"github.com/linkernetworks/session"
+	"github.com/linkernetworks/web-services/web"
 )
 
 func SignOutUserHandler(ctx *web.Context) {

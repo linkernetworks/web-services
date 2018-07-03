@@ -3,13 +3,13 @@ package usersession
 import (
 	"net/http"
 
-	response "github.com/linkernetworks/net/http"
-	"bitbucket.org/linkernetworks/aurora/src/pwdutil"
-	"bitbucket.org/linkernetworks/aurora/src/validator"
-	"bitbucket.org/linkernetworks/aurora/src/web"
 	"github.com/linkernetworks/logger"
+	response "github.com/linkernetworks/net/http"
 	oauth "github.com/linkernetworks/oauth/entity"
 	"github.com/linkernetworks/oauth/util"
+	"github.com/linkernetworks/validator"
+	"github.com/linkernetworks/web-services/pwdutil"
+	"github.com/linkernetworks/web-services/web"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -73,7 +73,7 @@ func SignUpUserHandler(ctx *web.Context) {
 	}
 
 	user.ID = bson.NewObjectId()
-	user.Password, err = pwdutil.EncryptPasswordLegacy(user.Password)
+	user.Password, err = pwdutil.EncryptPasswordLegacy(user.Password, ctx.ServiceProvider.Config.PassSalt)
 	if err != nil {
 		logger.Error(err)
 		response.InternalServerError(req.Request, resp.ResponseWriter, err)

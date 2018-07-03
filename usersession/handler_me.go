@@ -1,10 +1,10 @@
 package usersession
 
 import (
-	"bitbucket.org/linkernetworks/aurora/src/acl"
 	"github.com/linkernetworks/net/http"
-	"bitbucket.org/linkernetworks/aurora/src/web"
 	"github.com/linkernetworks/session"
+	"github.com/linkernetworks/web-services/acl"
+	"github.com/linkernetworks/web-services/web"
 
 	"gopkg.in/mgo.v2"
 )
