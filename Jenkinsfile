@@ -7,13 +7,13 @@ pipeline {
     options {
         timestamps()
         timeout(time: 1, unit: 'HOURS')
-        checkoutToSubdirectory('src/github.com/linkernetworks/web-services')
+        checkoutToSubdirectory('src/github.com/linkernetworks/webservice')
     }
     stages {
         stage('Prepare') {
             steps {
                 withEnv(["GOPATH+GO=${env.WORKSPACE}"]) {
-                    dir ("src/github.com/linkernetworks/web-services") {
+                    dir ("src/github.com/linkernetworks/webservice") {
                         sh "make pre-build"
                     }
                 }
@@ -22,7 +22,7 @@ pipeline {
         stage('Build') {
             steps {
                 withEnv(["GOPATH+GO=${env.WORKSPACE}"]) {
-                    dir ("src/github.com/linkernetworks/web-services") {
+                    dir ("src/github.com/linkernetworks/webservice") {
                         sh "make build"
                     }
                 }
@@ -31,7 +31,7 @@ pipeline {
         stage('Test') {
             steps {
                 withEnv(["GOPATH+GO=${env.WORKSPACE}"]) {
-                    dir ("src/github.com/linkernetworks/web-services") {
+                    dir ("src/github.com/linkernetworks/webservice") {
                         sh "make test 2>&1 | tee >(go-junit-report > report.xml)"
                         junit "report.xml"
                         sh 'gocover-cobertura < coverage.txt > cobertura.xml'

@@ -3,7 +3,7 @@ package serviceprovider
 import (
 	"github.com/linkernetworks/logger"
 	"github.com/linkernetworks/mongo"
-	"github.com/linkernetworks/web-services/config"
+	"github.com/linkernetworks/webservice/config"
 )
 
 type Container struct {

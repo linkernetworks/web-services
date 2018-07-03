@@ -8,8 +8,8 @@ import (
 	oauth "github.com/linkernetworks/oauth/entity"
 	"github.com/linkernetworks/oauth/util"
 	"github.com/linkernetworks/validator"
-	"github.com/linkernetworks/web-services/pwdutil"
-	"github.com/linkernetworks/web-services/web"
+	"github.com/linkernetworks/webservice/pwdutil"
+	"github.com/linkernetworks/webservice/web"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

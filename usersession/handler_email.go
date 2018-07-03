@@ -10,7 +10,7 @@ import (
 	response "github.com/linkernetworks/net/http"
 	oauth "github.com/linkernetworks/oauth/entity"
 	"github.com/linkernetworks/validator"
-	"github.com/linkernetworks/web-services/web"
+	"github.com/linkernetworks/webservice/web"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
