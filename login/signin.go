@@ -71,7 +71,7 @@ func (s *LoginService) signIn(req *restful.Request, resp *restful.Response) {
 		return
 	}
 
-	token, err := SignIn(req.Request, resp.ResponseWriter, &user)
+	token, err := s.signInSession(req.Request, resp.ResponseWriter, &user)
 	if err != nil {
 		http.InternalServerError(req.Request, resp.ResponseWriter, err)
 		return

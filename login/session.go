@@ -20,16 +20,16 @@ import (
 // will be the cookie name defined in the http header
 const SessionKey = "ses"
 
-func AllocateNewSessionToken() uuid.UUID {
+func (s *LoginService) allocateNewSessionToken() uuid.UUID {
 	return uuid.NewV4()
 }
 
-func GetSession(req *http.Request) (*sessions.Session, error) {
+func (s *LoginService) getSession(req *http.Request) (*sessions.Session, error) {
 	return session.Service.Store.Get(req, SessionKey)
 }
 
 // Pre-Handler user session authentication
-func SessionAuthenticationFilter(req *restful.Request, resp *restful.Response, chain *restful.FilterChain) {
+func (s *LoginService) authenticatedFilter(req *restful.Request, resp *restful.Response, chain *restful.FilterChain) {
 
 	sess, err := session.Service.Store.Get(req.Request, SessionKey)
 	if err != nil {
@@ -38,7 +38,7 @@ func SessionAuthenticationFilter(req *restful.Request, resp *restful.Response, c
 		return
 	}
 
-	if !isExpired(sess) {
+	if !s.isExpired(sess) {
 		//refresh
 		sess.Values["expiredAt"] = time.Now().Add(24 * time.Hour).Unix()
 		if err := sess.Save(req.Request, resp); err != nil {
@@ -57,7 +57,7 @@ func SessionAuthenticationFilter(req *restful.Request, resp *restful.Response, c
 	return
 }
 
-func RegisterUserSession(req *http.Request, resp http.ResponseWriter, ses *sessions.Session, u *oauth.User) error {
+func (s *LoginService) registerUserSession(req *http.Request, resp http.ResponseWriter, ses *sessions.Session, u *oauth.User) error {
 
 	if len(u.Email) == 0 {
 		return errors.New("email is required to register user session.")
@@ -73,16 +73,16 @@ func RegisterUserSession(req *http.Request, resp http.ResponseWriter, ses *sessi
 	return ses.Save(req, resp)
 }
 
-func SignIn(req *http.Request, resp http.ResponseWriter, user *oauth.User) (uuid.UUID, error) {
-	token := AllocateNewSessionToken()
-	ses, err := GetSession(req)
+func (s *LoginService) signInSession(req *http.Request, resp http.ResponseWriter, user *oauth.User) (uuid.UUID, error) {
+	token := s.allocateNewSessionToken()
+	ses, err := s.getSession(req)
 	if err != nil {
 		return token, err
 	}
-	return token, RegisterUserSession(req, resp, ses, user)
+	return token, s.registerUserSession(req, resp, ses, user)
 }
 
-func isExpired(sess *sessions.Session) bool {
+func (s *LoginService) isExpired(sess *sessions.Session) bool {
 	expiredAt := sess.Values["expiredAt"]
 	if expiredAt == nil {
 		return true
