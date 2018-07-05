@@ -3,13 +3,12 @@ package login
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	restful "github.com/emicklei/go-restful"
 	"github.com/linkernetworks/logger"
 	"github.com/linkernetworks/net/http"
-	oauth "github.com/linkernetworks/oauth/entity"
-	"github.com/linkernetworks/oauth/util"
-	"github.com/linkernetworks/oauth/validator"
+	"github.com/linkernetworks/validator"
 	"github.com/linkernetworks/webservice/login/entity"
 	"github.com/linkernetworks/webservice/pwdutil"
 	"gopkg.in/mgo.v2"
@@ -22,7 +21,7 @@ var (
 
 func (s *LoginService) signIn(req *restful.Request, resp *restful.Response) {
 
-	form := oauth.User{}
+	form := entity.User{}
 	if err := req.ReadEntity(&form); err != nil {
 		http.BadRequest(req.Request, resp.ResponseWriter, err)
 		return
@@ -55,8 +54,8 @@ func (s *LoginService) signIn(req *restful.Request, resp *restful.Response) {
 	}
 	query := bson.M{"email": form.Email, "password": password}
 
-	user := oauth.User{}
-	if err := session.FindOne(oauth.UserCollectionName, query, &user); err != nil {
+	user := entity.User{}
+	if err := session.FindOne(entity.UserCollectionName, query, &user); err != nil {
 		if err == mgo.ErrNotFound {
 			http.Forbidden(req.Request, resp.ResponseWriter, ErrInvalidUsernameOrPassword)
 			return
@@ -78,12 +77,12 @@ func (s *LoginService) signIn(req *restful.Request, resp *restful.Response) {
 	}
 
 	// Update last login timestamp & token
-	user.LastLoggedInAt = util.GetCurrentTimestamp()
+	user.LastLoggedInAt = time.Now().Unix()
 	user.AccessToken = token.String()
 
 	query = bson.M{"_id": user.ID}
 	modifier := bson.M{"$set": user}
-	if err := session.C(oauth.UserCollectionName).Update(query, modifier); err != nil {
+	if err := session.C(entity.UserCollectionName).Update(query, modifier); err != nil {
 		logger.Error(err)
 		if err == mgo.ErrNotFound {
 			http.NotFound(req.Request, resp.ResponseWriter, err)

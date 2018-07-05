@@ -2,12 +2,11 @@ package login
 
 import (
 	"net/http"
+	"time"
 
 	restful "github.com/emicklei/go-restful"
 	"github.com/linkernetworks/logger"
 	response "github.com/linkernetworks/net/http"
-	oauth "github.com/linkernetworks/oauth/entity"
-	"github.com/linkernetworks/oauth/util"
 	"github.com/linkernetworks/validator"
 	"github.com/linkernetworks/webservice/login/entity"
 	"github.com/linkernetworks/webservice/pwdutil"
@@ -17,7 +16,7 @@ import (
 
 func (s *LoginService) signUp(req *restful.Request, resp *restful.Response) {
 
-	user := oauth.User{}
+	user := entity.User{}
 	if err := req.ReadEntity(&user); err != nil {
 		logger.Error(err)
 		response.BadRequest(req.Request, resp.ResponseWriter, err)
@@ -44,8 +43,8 @@ func (s *LoginService) signUp(req *restful.Request, resp *restful.Response) {
 	}
 	// Then Check user existed
 	query := bson.M{"email": user.Email}
-	existedUser := oauth.User{}
-	if err := session.FindOne(oauth.UserCollectionName, query, &existedUser); err != nil {
+	existedUser := entity.User{}
+	if err := session.FindOne(entity.UserCollectionName, query, &existedUser); err != nil {
 		if err.Error() != mgo.ErrNotFound.Error() {
 			logger.Error(err)
 			response.InternalServerError(req.Request, resp.ResponseWriter, err)
@@ -79,12 +78,12 @@ func (s *LoginService) signUp(req *restful.Request, resp *restful.Response) {
 		response.InternalServerError(req.Request, resp.ResponseWriter, err)
 		return
 	}
-	user.CreatedAt = util.GetCurrentTimestamp()
+	user.CreatedAt = time.Now().Unix()
 	user.Roles = []string{"user"}
 	user.Revoked = false
 	user.JobPriority = 3000
 
-	if err := session.Insert(oauth.UserCollectionName, &user); err != nil {
+	if err := session.Insert(entity.UserCollectionName, &user); err != nil {
 		logger.Error(err)
 		response.InternalServerError(req.Request, resp.ResponseWriter, err)
 		return

@@ -9,7 +9,6 @@ import (
 	"github.com/linkernetworks/logger"
 	"github.com/linkernetworks/mongo"
 	response "github.com/linkernetworks/net/http"
-	oauth "github.com/linkernetworks/oauth/entity"
 	"github.com/linkernetworks/validator"
 	"github.com/linkernetworks/webservice/login/entity"
 	"gopkg.in/mgo.v2"
@@ -53,8 +52,8 @@ func (s *LoginService) checkEmail(req *restful.Request, resp *restful.Response) 
 
 	// Check user existed
 	query := bson.M{"email": email}
-	existedUser := oauth.User{}
-	if err := session.FindOne(oauth.UserCollectionName, query, &existedUser); err != nil {
+	existedUser := entity.User{}
+	if err := session.FindOne(entity.UserCollectionName, query, &existedUser); err != nil {
 		logger.Error(err)
 		if err == mgo.ErrNotFound {
 			response.NotFound(req.Request, resp.ResponseWriter, err)
@@ -79,12 +78,12 @@ func (s *LoginService) checkEmail(req *restful.Request, resp *restful.Response) 
 	})
 }
 
-func loadUserByEmail(service *mongo.Service, email string) (*oauth.User, error) {
+func loadUserByEmail(service *mongo.Service, email string) (*entity.User, error) {
 	session := service.NewSession()
 	defer session.Close()
 
 	var q = bson.M{"email": email}
-	var u oauth.User
-	var err = session.FindOne(oauth.UserCollectionName, q, &u)
+	var u entity.User
+	var err = session.FindOne(entity.UserCollectionName, q, &u)
 	return &u, err
 }

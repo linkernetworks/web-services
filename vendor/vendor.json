@@ -9,12 +9,6 @@
 			"revisionTime": "2018-07-01T20:16:48Z"
 		},
 		{
-			"checksumSHA1": "4772zXrOaPVeDeSgdiV7Vp4KEjk=",
-			"path": "github.com/dgrijalva/jwt-go",
-			"revision": "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e",
-			"revisionTime": "2018-03-08T23:13:08Z"
-		},
-		{
 			"checksumSHA1": "QnuAzRx3UVd1VEpVmUKqrdg7ZzU=",
 			"path": "github.com/emicklei/go-restful",
 			"revision": "3eb9738c1697594ea6e71a7156a9bb32ed216cf0",
@@ -97,34 +91,6 @@
 			"path": "github.com/linkernetworks/net/http",
 			"revision": "946701828d6c210239143ab54cb1506fc6131d5e",
 			"revisionTime": "2018-06-19T03:23:25Z"
-		},
-		{
-			"path": "github.com/linkernetworks/oauth/app/entity",
-			"revision": ""
-		},
-		{
-			"checksumSHA1": "V89FgGKA+7A70mAedEvmhDSCIyQ=",
-			"path": "github.com/linkernetworks/oauth/entity",
-			"revision": "a7fe484fc0cf65696dd9479eb8bad1b2dd416ca9",
-			"revisionTime": "2018-05-31T10:18:20Z"
-		},
-		{
-			"checksumSHA1": "4/IfV+Mt6oezQKrcgEI1jX2n0G8=",
-			"path": "github.com/linkernetworks/oauth/util",
-			"revision": "a7fe484fc0cf65696dd9479eb8bad1b2dd416ca9",
-			"revisionTime": "2018-05-31T10:18:20Z"
-		},
-		{
-			"checksumSHA1": "4/IfV+Mt6oezQKrcgEI1jX2n0G8=",
-			"path": "github.com/linkernetworks/oauth/util",
-			"revision": "73c58d62128487d7b126176d96b4a28f6e3d437d",
-			"revisionTime": "2018-05-28T08:47:46Z"
-		},
-		{
-			"checksumSHA1": "AKLH/vvouSClTST+hT1f+2ldEu4=",
-			"path": "github.com/linkernetworks/oauth/validator",
-			"revision": "a7fe484fc0cf65696dd9479eb8bad1b2dd416ca9",
-			"revisionTime": "2018-05-31T10:18:20Z"
 		},
 		{
 			"checksumSHA1": "iBGEr+J1x9JSl/ppe3y8j94GSXo=",
