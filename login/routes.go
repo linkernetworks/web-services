@@ -1,4 +1,4 @@
-package usersession
+package login
 
 import (
 	restful "github.com/emicklei/go-restful"
