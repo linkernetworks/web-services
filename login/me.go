@@ -4,7 +4,6 @@ import (
 	restful "github.com/emicklei/go-restful"
 	"github.com/linkernetworks/net/http"
 	"github.com/linkernetworks/session"
-	"github.com/linkernetworks/webservice/acl"
 	"github.com/linkernetworks/webservice/login/entity"
 
 	"gopkg.in/mgo.v2"
@@ -22,7 +21,7 @@ func (s *LoginService) me(req *restful.Request, resp *restful.Response) {
 	ses := s.mongo.NewSession()
 	defer ses.Close()
 
-	user, err := acl.GetCurrentUserRestful(ses, req)
+	user, err := s.GetCurrentUserRestful(ses, req)
 	if err != nil {
 		if err == mgo.ErrNotFound {
 			http.NotFound(req.Request, resp, err)

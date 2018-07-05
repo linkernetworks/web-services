@@ -2,6 +2,7 @@ package usersession
 
 import (
 	restful "github.com/emicklei/go-restful"
+	"github.com/gorilla/sessions"
 
 	"github.com/linkernetworks/mongo"
 )
@@ -14,6 +15,7 @@ type Config struct {
 type LoginService struct {
 	passworldSalt string
 	mongo         *mongo.Service
+	store         sessions.Store
 	restful.WebService
 }
 
