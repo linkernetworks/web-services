@@ -6,12 +6,10 @@ import (
 	"fmt"
 
 	restful "github.com/emicklei/go-restful"
-	"github.com/linkernetworks/logger"
 	"github.com/linkernetworks/mongo"
 	response "github.com/linkernetworks/net/http"
 	"github.com/linkernetworks/validator"
 	"github.com/linkernetworks/webservice/login/entity"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -47,19 +45,9 @@ func (s *LoginService) checkEmail(req *restful.Request, resp *restful.Response) 
 		return
 	}
 
-	session := s.mongo.NewSession()
-	defer session.Close()
-
-	// Check user existed
-	query := bson.M{"email": email}
-	existedUser := entity.User{}
-	if err := session.FindOne(entity.UserCollectionName, query, &existedUser); err != nil {
-		logger.Error(err)
-		if err == mgo.ErrNotFound {
-			response.NotFound(req.Request, resp.ResponseWriter, err)
-			return
-		}
-		response.InternalServerError(req.Request, resp.ResponseWriter, err)
+	existedUser := s.userStorage.FindByEmail(email)
+	if existedUser == nil {
+		response.NotFound(req.Request, resp.ResponseWriter, err)
 		return
 	}
 	if len(existedUser.ID) > 1 {

@@ -8,12 +8,10 @@ import (
 	"time"
 
 	restful "github.com/emicklei/go-restful"
-	"github.com/linkernetworks/mongo"
+	"github.com/linkernetworks/logger"
 	response "github.com/linkernetworks/net/http"
 	"github.com/linkernetworks/session"
 	"github.com/linkernetworks/webservice/login/entity"
-	mgo "gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 
 	"github.com/gorilla/sessions"
 	"github.com/satori/go.uuid"
@@ -92,86 +90,46 @@ func (s *LoginService) isExpired(sess *sessions.Session) bool {
 	return expiredAt.(int64) < time.Now().Unix()
 }
 
-func (s *LoginService) GetCurrentUserRestful(ses *mongo.Session, req *restful.Request) (*entity.User, error) {
+func (s *LoginService) GetCurrentUserRestful(req *restful.Request) *entity.User {
 	token := req.Request.Header.Get("Authorization")
 	if len(token) == 0 {
-		return s.GetCurrentUser(ses, req.Request)
+		return s.GetCurrentUser(req.Request)
 	}
 
-	return s.GetCurrentUserByToken(ses, token)
+	user := s.userStorage.FindByToken(token)
+
+	return user
 }
 
 // GetCurrentUser get current user data with login session and return user data
 // excluding sensitive data like password.
-func (s *LoginService) GetCurrentUser(ses *mongo.Session, req *http.Request) (*entity.User, error) {
-	email, err := s.GetCurrentUserEmail(req)
-	if err != nil {
-		return nil, err
+func (s *LoginService) GetCurrentUser(req *http.Request) *entity.User {
+	email := s.GetCurrentUserEmail(req)
+	if email == "" {
+		return nil
 	}
 
-	user := entity.User{}
-	q := bson.M{"email": email}
-	projection := bson.M{"password": 0}
-	if err := ses.C(entity.UserCollectionName).Find(q).Select(projection).One(&user); err != nil {
-		if err == mgo.ErrNotFound {
-			return nil, fmt.Errorf("user document not found.")
-		}
-		return nil, err
-	}
+	user := s.userStorage.FindByEmail(email)
 
-	return &user, nil
+	return user
 }
 
-// GetCurrentUserByToken get current user data with login token and return user data
-// excluding sensitive data like password.
-func (s *LoginService) GetCurrentUserByToken(ses *mongo.Session, token string) (*entity.User, error) {
-	user := entity.User{}
-	q := bson.M{"access_token": token}
-	projection := bson.M{"password": 0}
-	if err := ses.C(entity.UserCollectionName).Find(q).Select(projection).One(&user); err != nil {
-		if err == mgo.ErrNotFound {
-			return nil, fmt.Errorf("user document not found.")
-		}
-		return nil, err
-	}
-
-	return &user, nil
-}
-
-// GetCurrentUserWithPassword get current user data with login session and return all user data
-// including sensitive data like encrypted password.
-func (s *LoginService) GetCurrentUserWithPassword(ses *mongo.Session, req *http.Request) (*entity.User, error) {
-	email, err := s.GetCurrentUserEmail(req)
-	if err != nil {
-		return nil, err
-	}
-
-	user := entity.User{}
-	q := bson.M{"email": email}
-	if err := ses.C(entity.UserCollectionName).Find(q).One(&user); err != nil {
-		if err == mgo.ErrNotFound {
-			return nil, fmt.Errorf("user document not found.")
-		}
-		return nil, err
-	}
-
-	return &user, nil
-}
-
-func (s *LoginService) GetCurrentUserEmail(req *http.Request) (string, error) {
+func (s *LoginService) GetCurrentUserEmail(req *http.Request) string {
 	session, err := session.Service.Store.Get(req, SessionKey)
 	if err != nil {
-		return "", err
+		logger.Errorf("Get session [%v] failed. err: [%v]", SessionKey, err)
+		return ""
 	}
 
 	val, found := session.Values["email"]
 	if !found {
-		return "", fmt.Errorf("session email is not set.")
+		return ""
 	}
 
 	email, ok := val.(string)
 	if !ok {
-		return "", fmt.Errorf("session email value type is invalid.")
+		logger.Errorf("Convert [%v] to string failed.", val)
+		return ""
 	}
-	return email, err
+	return email
 }

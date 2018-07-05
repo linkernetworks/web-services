@@ -10,7 +10,6 @@ import (
 	"github.com/linkernetworks/validator"
 	"github.com/linkernetworks/webservice/login/entity"
 	"github.com/linkernetworks/webservice/pwdutil"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -33,24 +32,13 @@ func (s *LoginService) signUp(req *restful.Request, resp *restful.Response) {
 		validations["lastName"] = lastNameValidate
 	}
 
-	session := s.mongo.NewSession()
-	defer session.Close()
-
 	// Check user email validate first
 	emailValidate, err := validator.ValidateEmail(user.Email)
 	if err != nil {
 		validations["email"] = emailValidate
 	}
 	// Then Check user existed
-	query := bson.M{"email": user.Email}
-	existedUser := entity.User{}
-	if err := session.FindOne(entity.UserCollectionName, query, &existedUser); err != nil {
-		if err.Error() != mgo.ErrNotFound.Error() {
-			logger.Error(err)
-			response.InternalServerError(req.Request, resp.ResponseWriter, err)
-			return
-		}
-	}
+	existedUser := s.userStorage.FindByEmail(user.Email)
 	if len(existedUser.ID) > 1 {
 		emailValidate.Field = "email"
 		emailValidate.Error = true
@@ -83,11 +71,13 @@ func (s *LoginService) signUp(req *restful.Request, resp *restful.Response) {
 	user.Revoked = false
 	user.JobPriority = 3000
 
-	if err := session.Insert(entity.UserCollectionName, &user); err != nil {
+	err = s.userStorage.Save(&user)
+	if err != nil {
 		logger.Error(err)
 		response.InternalServerError(req.Request, resp.ResponseWriter, err)
 		return
 	}
+
 	resp.WriteEntity(entity.ActionResponse{
 		Error:   false,
 		Message: "Sign up success",

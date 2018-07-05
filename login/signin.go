@@ -11,8 +11,6 @@ import (
 	"github.com/linkernetworks/validator"
 	"github.com/linkernetworks/webservice/login/entity"
 	"github.com/linkernetworks/webservice/pwdutil"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 )
 
 var (
@@ -42,9 +40,6 @@ func (s *LoginService) signIn(req *restful.Request, resp *restful.Response) {
 		return
 	}
 
-	session := s.mongo.NewSession()
-	defer session.Close()
-
 	// get user from db
 	password, err := pwdutil.EncryptPasswordLegacy(form.Password, s.passworldSalt)
 
@@ -52,17 +47,11 @@ func (s *LoginService) signIn(req *restful.Request, resp *restful.Response) {
 		http.BadRequest(req.Request, resp.ResponseWriter, err)
 		return
 	}
-	query := bson.M{"email": form.Email, "password": password}
 
-	user := entity.User{}
-	if err := session.FindOne(entity.UserCollectionName, query, &user); err != nil {
-		if err == mgo.ErrNotFound {
-			http.Forbidden(req.Request, resp.ResponseWriter, ErrInvalidUsernameOrPassword)
-			return
-		} else {
-			http.Forbidden(req.Request, resp.ResponseWriter, err)
-			return
-		}
+	user := s.userStorage.FindByPassword(form.Email, password)
+	if user == nil {
+		http.Forbidden(req.Request, resp.ResponseWriter, ErrInvalidUsernameOrPassword)
+		return
 	}
 
 	if user.Revoked {
@@ -70,7 +59,7 @@ func (s *LoginService) signIn(req *restful.Request, resp *restful.Response) {
 		return
 	}
 
-	token, err := s.signInSession(req.Request, resp.ResponseWriter, &user)
+	token, err := s.signInSession(req.Request, resp.ResponseWriter, user)
 	if err != nil {
 		http.InternalServerError(req.Request, resp.ResponseWriter, err)
 		return
@@ -80,14 +69,8 @@ func (s *LoginService) signIn(req *restful.Request, resp *restful.Response) {
 	user.LastLoggedInAt = time.Now().Unix()
 	user.AccessToken = token.String()
 
-	query = bson.M{"_id": user.ID}
-	modifier := bson.M{"$set": user}
-	if err := session.C(entity.UserCollectionName).Update(query, modifier); err != nil {
-		logger.Error(err)
-		if err == mgo.ErrNotFound {
-			http.NotFound(req.Request, resp.ResponseWriter, err)
-			return
-		}
+	err = s.userStorage.Save(user)
+	if err != nil {
 		http.InternalServerError(req.Request, resp.ResponseWriter, err)
 		return
 	}

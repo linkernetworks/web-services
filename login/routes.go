@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/sessions"
 
 	"github.com/linkernetworks/mongo"
+	"github.com/linkernetworks/webservice/userstorage"
 )
 
 type Config struct {
@@ -14,7 +15,7 @@ type Config struct {
 
 type LoginService struct {
 	passworldSalt string
-	mongo         *mongo.Service
+	userStorage   userstorage.UserStorage
 	store         sessions.Store
 	restful.WebService
 }
