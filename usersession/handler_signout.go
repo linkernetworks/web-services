@@ -6,7 +6,7 @@ import (
 	"github.com/linkernetworks/logger"
 	response "github.com/linkernetworks/net/http"
 	"github.com/linkernetworks/session"
-	"github.com/linkernetworks/web-services/web"
+	"github.com/linkernetworks/webservice/web"
 )
 
 func SignOutUserHandler(ctx *web.Context) {

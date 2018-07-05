@@ -4,8 +4,8 @@ import (
 	restful "github.com/emicklei/go-restful"
 	// "github.com/linkernetworks/vortex/src/net/http"
 
-	"github.com/linkernetworks/web-services/serviceprovider"
-	"github.com/linkernetworks/web-services/web"
+	"github.com/linkernetworks/webservice/serviceprovider"
+	"github.com/linkernetworks/webservice/web"
 )
 
 func NewLoginService(sp *serviceprovider.Container) *restful.WebService {

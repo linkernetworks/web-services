@@ -3,8 +3,8 @@ package usersession
 import (
 	"github.com/linkernetworks/net/http"
 	"github.com/linkernetworks/session"
-	"github.com/linkernetworks/web-services/acl"
-	"github.com/linkernetworks/web-services/web"
+	"github.com/linkernetworks/webservice/acl"
+	"github.com/linkernetworks/webservice/web"
 
 	"gopkg.in/mgo.v2"
 )

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	restful "github.com/emicklei/go-restful"
-	"github.com/linkernetworks/web-services/serviceprovider"
+	"github.com/linkernetworks/webservice/serviceprovider"
 )
 
 type Context struct {
