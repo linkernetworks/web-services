@@ -2,28 +2,29 @@ package usersession
 
 import (
 	restful "github.com/emicklei/go-restful"
-	// "github.com/linkernetworks/vortex/src/net/http"
 
-	"github.com/linkernetworks/webservice/serviceprovider"
-	"github.com/linkernetworks/webservice/web"
+	"github.com/linkernetworks/mongo"
 )
 
-func NewLoginService(sp *serviceprovider.Container) *restful.WebService {
-	ws := new(restful.WebService)
-	ws.Path("/v1").Consumes(restful.MIME_JSON, restful.MIME_JSON).Produces(restful.MIME_JSON, restful.MIME_JSON)
-	ws.Route(ws.GET("/me").Filter(SessionAuthenticationFilter).To(RESTfulServiceHandler(sp, GetMeHandler)))
-	ws.Route(ws.POST("/email/check").To(RESTfulServiceHandler(sp, CheckEmailAvailability)))
-	ws.Route(ws.POST("/signup").To(RESTfulServiceHandler(sp, SignUpUserHandler)))
-	ws.Route(ws.POST("/signin").To(RESTfulServiceHandler(sp, SignInUserHandler)))
-	ws.Route(ws.GET("/signout").Filter(SessionAuthenticationFilter).To(RESTfulServiceHandler(sp, SignOutUserHandler)))
-	return ws
+type Config struct {
+	PassworldSalt string
+	Mongo         *mongo.MongoConfig
 }
 
-type RESTfulContextHandler func(*web.Context)
+type LoginService struct {
+	passworldSalt string
+	mongo         *mongo.Service
+	restful.WebService
+}
 
-func RESTfulServiceHandler(sp *serviceprovider.Container, handler RESTfulContextHandler) restful.RouteFunction {
-	return func(req *restful.Request, resp *restful.Response) {
-		ctx := web.Context{sp, req, resp}
-		handler(&ctx)
-	}
+func New(c *Config) *LoginService {
+
+	s := &LoginService{}
+	s.Path("/v1").Consumes(restful.MIME_JSON, restful.MIME_JSON).Produces(restful.MIME_JSON, restful.MIME_JSON)
+	s.Route(s.GET("/me").Filter(SessionAuthenticationFilter).To(s.me))
+	s.Route(s.POST("/email/check").To(s.checkEmail))
+	s.Route(s.POST("/signup").To(s.signUp))
+	s.Route(s.POST("/signin").To(s.signIn))
+	s.Route(s.GET("/signout").Filter(SessionAuthenticationFilter).To(s.signOut))
+	return s
 }

@@ -1,16 +1,15 @@
 package usersession
 
 import (
+	restful "github.com/emicklei/go-restful"
 	"github.com/linkernetworks/net/http"
 	"github.com/linkernetworks/session"
 	"github.com/linkernetworks/webservice/acl"
-	"github.com/linkernetworks/webservice/web"
 
 	"gopkg.in/mgo.v2"
 )
 
-func GetMeHandler(ctx *web.Context) {
-	as, req, resp := ctx.ServiceProvider, ctx.Request, ctx.Response
+func (s *LoginService) me(req *restful.Request, resp *restful.Response) {
 
 	token := req.Request.Header.Get("Authorization")
 	session, err := session.Service.Store.Get(req.Request, SessionKey)
@@ -19,7 +18,7 @@ func GetMeHandler(ctx *web.Context) {
 		return
 	}
 
-	ses := as.Mongo.NewSession()
+	ses := s.mongo.NewSession()
 	defer ses.Close()
 
 	user, err := acl.GetCurrentUserRestful(ses, req)

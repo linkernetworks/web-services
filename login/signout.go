@@ -3,14 +3,13 @@ package usersession
 import (
 	"net/http"
 
+	restful "github.com/emicklei/go-restful"
 	"github.com/linkernetworks/logger"
 	response "github.com/linkernetworks/net/http"
 	"github.com/linkernetworks/session"
-	"github.com/linkernetworks/webservice/web"
 )
 
-func SignOutUserHandler(ctx *web.Context) {
-	req, resp := ctx.Request, ctx.Response
+func (s *LoginService) signOut(req *restful.Request, resp *restful.Response) {
 
 	sess, err := session.Service.Store.Get(req.Request, SessionKey)
 	if err != nil {

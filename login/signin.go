@@ -4,13 +4,13 @@ import (
 	"errors"
 	"fmt"
 
+	restful "github.com/emicklei/go-restful"
 	"github.com/linkernetworks/logger"
 	"github.com/linkernetworks/net/http"
 	oauth "github.com/linkernetworks/oauth/entity"
 	"github.com/linkernetworks/oauth/util"
 	"github.com/linkernetworks/oauth/validator"
 	"github.com/linkernetworks/webservice/pwdutil"
-	"github.com/linkernetworks/webservice/web"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -19,8 +19,7 @@ var (
 	ErrInvalidUsernameOrPassword = errors.New("Login failed. Incorrect username or password.")
 )
 
-func SignInUserHandler(ctx *web.Context) {
-	as, req, resp := ctx.ServiceProvider, ctx.Request, ctx.Response
+func (s *LoginService) signIn(req *restful.Request, resp *restful.Response) {
 
 	form := oauth.User{}
 	if err := req.ReadEntity(&form); err != nil {
@@ -43,11 +42,11 @@ func SignInUserHandler(ctx *web.Context) {
 		return
 	}
 
-	session := as.Mongo.NewSession()
+	session := s.mongo.NewSession()
 	defer session.Close()
 
 	// get user from db
-	password, err := pwdutil.EncryptPasswordLegacy(form.Password, ctx.ServiceProvider.Config.PassSalt)
+	password, err := pwdutil.EncryptPasswordLegacy(form.Password, s.passworldSalt)
 
 	if err != nil {
 		http.BadRequest(req.Request, resp.ResponseWriter, err)

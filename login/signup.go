@@ -3,19 +3,18 @@ package usersession
 import (
 	"net/http"
 
+	restful "github.com/emicklei/go-restful"
 	"github.com/linkernetworks/logger"
 	response "github.com/linkernetworks/net/http"
 	oauth "github.com/linkernetworks/oauth/entity"
 	"github.com/linkernetworks/oauth/util"
 	"github.com/linkernetworks/validator"
 	"github.com/linkernetworks/webservice/pwdutil"
-	"github.com/linkernetworks/webservice/web"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
-func SignUpUserHandler(ctx *web.Context) {
-	as, req, resp := ctx.ServiceProvider, ctx.Request, ctx.Response
+func (s *LoginService) signUp(req *restful.Request, resp *restful.Response) {
 
 	user := oauth.User{}
 	if err := req.ReadEntity(&user); err != nil {
@@ -34,7 +33,7 @@ func SignUpUserHandler(ctx *web.Context) {
 		validations["lastName"] = lastNameValidate
 	}
 
-	session := as.Mongo.NewSession()
+	session := s.mongo.NewSession()
 	defer session.Close()
 
 	// Check user email validate first
@@ -73,7 +72,7 @@ func SignUpUserHandler(ctx *web.Context) {
 	}
 
 	user.ID = bson.NewObjectId()
-	user.Password, err = pwdutil.EncryptPasswordLegacy(user.Password, ctx.ServiceProvider.Config.PassSalt)
+	user.Password, err = pwdutil.EncryptPasswordLegacy(user.Password, s.passworldSalt)
 	if err != nil {
 		logger.Error(err)
 		response.InternalServerError(req.Request, resp.ResponseWriter, err)

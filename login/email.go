@@ -5,12 +5,12 @@ import (
 
 	"fmt"
 
+	restful "github.com/emicklei/go-restful"
 	"github.com/linkernetworks/logger"
 	"github.com/linkernetworks/mongo"
 	response "github.com/linkernetworks/net/http"
 	oauth "github.com/linkernetworks/oauth/entity"
 	"github.com/linkernetworks/validator"
-	"github.com/linkernetworks/webservice/web"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -19,8 +19,7 @@ type emailCheckRequest struct {
 	Email string `json:"email"`
 }
 
-func CheckEmailAvailability(ctx *web.Context) {
-	sp, req, resp := ctx.ServiceProvider, ctx.Request, ctx.Response
+func (s *LoginService) checkEmail(req *restful.Request, resp *restful.Response) {
 
 	var e emailCheckRequest
 	if err := req.ReadEntity(&e); err != nil {
@@ -48,7 +47,7 @@ func CheckEmailAvailability(ctx *web.Context) {
 		return
 	}
 
-	session := sp.Mongo.NewSession()
+	session := s.mongo.NewSession()
 	defer session.Close()
 
 	// Check user existed
