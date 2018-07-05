@@ -10,6 +10,7 @@ import (
 	oauth "github.com/linkernetworks/oauth/entity"
 	"github.com/linkernetworks/oauth/util"
 	"github.com/linkernetworks/oauth/validator"
+	"github.com/linkernetworks/webservice/login/entity"
 	"github.com/linkernetworks/webservice/pwdutil"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -92,10 +93,10 @@ func (s *LoginService) signIn(req *restful.Request, resp *restful.Response) {
 		return
 	}
 
-	resp.WriteEntity(SignInResponse{
+	resp.WriteEntity(entity.SignInResponse{
 		Error:   false,
 		Message: "Login success",
-		Session: SessionResponse{
+		Session: entity.SessionResponse{
 			ID:    user.ID.Hex(),
 			Token: token.String(),
 		},

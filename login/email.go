@@ -11,6 +11,7 @@ import (
 	response "github.com/linkernetworks/net/http"
 	oauth "github.com/linkernetworks/oauth/entity"
 	"github.com/linkernetworks/validator"
+	"github.com/linkernetworks/webservice/login/entity"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -23,7 +24,7 @@ func (s *LoginService) checkEmail(req *restful.Request, resp *restful.Response) 
 
 	var e emailCheckRequest
 	if err := req.ReadEntity(&e); err != nil {
-		resp.WriteHeaderAndEntity(http.StatusBadRequest, ActionResponse{
+		resp.WriteHeaderAndEntity(http.StatusBadRequest, entity.ActionResponse{
 			Error:   true,
 			Message: "Failed to process entity",
 		})
@@ -39,7 +40,7 @@ func (s *LoginService) checkEmail(req *restful.Request, resp *restful.Response) 
 	}
 
 	if validations.HasError() {
-		resp.WriteHeaderAndEntity(http.StatusUnprocessableEntity, ActionResponse{
+		resp.WriteHeaderAndEntity(http.StatusUnprocessableEntity, entity.ActionResponse{
 			Error:       true,
 			Validations: validations,
 			Message:     "Email is not valid",
@@ -64,7 +65,7 @@ func (s *LoginService) checkEmail(req *restful.Request, resp *restful.Response) 
 	}
 	if len(existedUser.ID) > 1 {
 		msg := fmt.Sprintf("User email: %s already existed.", existedUser.Email)
-		resp.WriteHeaderAndEntity(http.StatusConflict, ActionResponse{
+		resp.WriteHeaderAndEntity(http.StatusConflict, entity.ActionResponse{
 			Error:       true,
 			Validations: validations,
 			Message:     msg,
@@ -72,7 +73,7 @@ func (s *LoginService) checkEmail(req *restful.Request, resp *restful.Response) 
 		return
 	}
 
-	resp.WriteEntity(ActionResponse{
+	resp.WriteEntity(entity.ActionResponse{
 		Error:   false,
 		Message: "email OK",
 	})

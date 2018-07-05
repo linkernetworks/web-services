@@ -11,7 +11,7 @@ import (
 	response "github.com/linkernetworks/net/http"
 	oauth "github.com/linkernetworks/oauth/entity"
 	"github.com/linkernetworks/session"
-	"github.com/linkernetworks/validator"
+	"github.com/linkernetworks/webservice/login/entity"
 
 	"github.com/gorilla/sessions"
 	"github.com/satori/go.uuid"
@@ -19,27 +19,6 @@ import (
 
 // will be the cookie name defined in the http header
 const SessionKey = "ses"
-
-type ActionResponse struct {
-	Error       bool                    `json:"error"`
-	Validations validator.ValidationMap `json:"validations,omitempty"`
-	Message     string                  `json:"message"`
-}
-
-type SignInResponse struct {
-	Error        bool            `json:"error"`
-	AuthRequired bool            `json:"authenRequired,omitempty"`
-	Message      string          `json:"message"`
-	SignInUrl    string          `json:"signInUrl,omitempty"`
-	Session      SessionResponse `json:"session,omitempty"`
-}
-
-type SessionResponse struct {
-	ID          string     `json:"id,omitempty"`
-	Token       string     `json:"token,omitempty"`
-	ExpiredAt   int64      `json:"expiredAt,omitempty"`
-	CurrentUser oauth.User `json:"currentUser,omitempty"`
-}
 
 func AllocateNewSessionToken() uuid.UUID {
 	return uuid.NewV4()
@@ -70,7 +49,7 @@ func SessionAuthenticationFilter(req *restful.Request, resp *restful.Response, c
 		return
 	}
 
-	resp.WriteHeaderAndEntity(http.StatusForbidden, SignInResponse{
+	resp.WriteHeaderAndEntity(http.StatusForbidden, entity.SignInResponse{
 		Error:     true,
 		Message:   "Unauthorized. Redirect to signin page",
 		SignInUrl: "/signin",

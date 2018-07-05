@@ -5,6 +5,7 @@ import (
 	"github.com/linkernetworks/net/http"
 	"github.com/linkernetworks/session"
 	"github.com/linkernetworks/webservice/acl"
+	"github.com/linkernetworks/webservice/login/entity"
 
 	"gopkg.in/mgo.v2"
 )
@@ -30,7 +31,7 @@ func (s *LoginService) me(req *restful.Request, resp *restful.Response) {
 		http.InternalServerError(req.Request, resp, err)
 		return
 	}
-	resp.WriteEntity(SessionResponse{
+	resp.WriteEntity(entity.SessionResponse{
 		ID:          user.ID.Hex(),
 		Token:       token,
 		ExpiredAt:   session.Values["expiredAt"].(int64),
