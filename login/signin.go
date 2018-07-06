@@ -28,17 +28,20 @@ func (s *LoginService) signIn(req *restful.Request, resp *restful.Response) {
 	var validations = validator.ValidationMap{}
 	emailValidate, err := validator.ValidateEmail(form.Email)
 	if err != nil {
-		validations["email"] = emailValidate
-	}
-	passworkValidate, err := validator.ValidatePassword(form.Password)
-	if err != nil {
-		validations["password"] = passworkValidate
-	}
-	if validations.HasError() {
 		logger.Error(err)
 		http.BadRequest(req.Request, resp.ResponseWriter, err)
 		return
 	}
+
+	passworkValidate, err := validator.ValidatePassword(form.Password)
+	if err != nil {
+		logger.Error(err)
+		http.BadRequest(req.Request, resp.ResponseWriter, err)
+		return
+	}
+
+	validations["email"] = emailValidate
+	validations["password"] = passworkValidate
 
 	// get user from db
 	password, err := pwdutil.EncryptPasswordLegacy(form.Password, s.passworldSalt)
