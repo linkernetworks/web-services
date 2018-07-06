@@ -17,7 +17,7 @@ type LoginService struct {
 	passworldSalt string
 	userStorage   userstorage.UserStorage
 	store         sessions.Store
-	restful.WebService
+	web           *restful.WebService
 }
 
 func New(c *config.Config) (*LoginService, error) {
@@ -46,15 +46,20 @@ func New(c *config.Config) (*LoginService, error) {
 		passworldSalt: dc.PassworldSalt,
 		userStorage:   user,
 		store:         store,
+		web:           &restful.WebService{},
 	}
 
-	s.Path("/v1").Consumes(restful.MIME_JSON, restful.MIME_JSON).Produces(restful.MIME_JSON, restful.MIME_JSON)
-	s.Route(s.GET("/me").Filter(s.authenticatedFilter).To(s.me))
-	s.Route(s.POST("/email/check").To(s.checkEmail))
-	s.Route(s.POST("/signup").To(s.signUp))
-	s.Route(s.POST("/signin").To(s.signIn))
-	s.Route(s.GET("/signout").Filter(s.authenticatedFilter).To(s.signOut))
+	s.web.Path("/v1").Consumes(restful.MIME_JSON, restful.MIME_JSON).Produces(restful.MIME_JSON, restful.MIME_JSON)
+	s.web.Route(s.web.GET("/me").Filter(s.authenticatedFilter).To(s.me))
+	s.web.Route(s.web.POST("/email/check").To(s.checkEmail))
+	s.web.Route(s.web.POST("/signup").To(s.signUp))
+	s.web.Route(s.web.POST("/signin").To(s.signIn))
+	s.web.Route(s.web.GET("/signout").Filter(s.authenticatedFilter).To(s.signOut))
 	return s, nil
+}
+
+func (s *LoginService) WebService() *restful.WebService {
+	return s.web
 }
 
 func getUserStorage(c *config.StoreConfig) (userstorage.UserStorage, error) {
