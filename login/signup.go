@@ -69,7 +69,6 @@ func (s *LoginService) signUp(req *restful.Request, resp *restful.Response) {
 	user.CreatedAt = time.Now().Unix()
 	user.Roles = []string{"user"}
 	user.Revoked = false
-	user.JobPriority = 3000
 
 	err = s.userStorage.Save(&user)
 	if err != nil {

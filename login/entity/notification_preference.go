@@ -5,10 +5,4 @@ package entity
 type NotificationPreference struct {
 	EnableSMS   bool `json:"enableSMS" bson:"enableSMS"`
 	EnableEmail bool `json:"enableEmail" bson:"enableEmail"`
-
-	WhenJobStart   bool `json:"whenJobStart" bson:"whenJobStart"`
-	WhenJobSuccess bool `json:"whenJobSuccess" bson:"whenJobSuccess"`
-	WhenJobFail    bool `json:"whenJobFail" bson:"whenJobFail"`
-	WhenJobStop    bool `json:"whenJobStop" bson:"whenJobStop"`
-	WhenJobDelete  bool `json:"whenJobDelete" bson:"whenJobDelete"`
 }

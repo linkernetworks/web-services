@@ -24,7 +24,6 @@ type User struct {
 	UpdatedAt             int64         `bson:"updated_at,omitempty" json:"updated_at"`
 	LastLoggedInAt        int64         `bson:"last_loggedin_at,omitempty" json:"last_loggedin_at"`
 	Revoked               bool          `bson:"revoked" json:"revoked"`
-	JobPriority           float64       `bson:"job_priority" json:"job_priority"`
 	Preference            Preference    `bson:"preference" json:"preference"`
 }
 
