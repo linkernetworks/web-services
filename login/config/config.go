@@ -3,9 +3,9 @@ package config
 type Type string
 
 const (
-	MEMORY Type = "MEMORY"
-	MONGO  Type = "MONGO"
-	REDIS  Type = "REDIS"
+	Memory Type = "MEMORY"
+	Mongo  Type = "MONGO"
+	Redis  Type = "REDIS"
 )
 
 type Config struct {
@@ -24,13 +24,13 @@ type StoreConfig struct {
 var DefaultConfig Config = Config{
 	PassworldSalt: "",
 	UserStore: StoreConfig{
-		Type:      MEMORY,
+		Type:      Memory,
 		MongoURL:  "mongodb://localhost:27017/user",
 		RedisHost: "localhost",
 		RedisPort: 6379,
 	},
 	SessionStore: StoreConfig{
-		Type:      MEMORY,
+		Type:      Memory,
 		MongoURL:  "mongodb://localhost:27017/session",
 		RedisHost: "localhost",
 		RedisPort: 6379,

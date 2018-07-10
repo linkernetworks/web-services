@@ -64,7 +64,7 @@ func (s *LoginService) WebService() *restful.WebService {
 
 func getUserStorage(c *config.StoreConfig) (userstorage.UserStorage, error) {
 	switch c.Type {
-	case config.MEMORY:
+	case config.Memory:
 		logger.Debugf("Use in-memory user storage.")
 		return userstorage.NewMemoryStorage(), nil
 	default:
@@ -74,7 +74,7 @@ func getUserStorage(c *config.StoreConfig) (userstorage.UserStorage, error) {
 
 func getSessionStore(c *config.StoreConfig) (sessions.Store, error) {
 	switch c.Type {
-	case config.MEMORY:
+	case config.Memory:
 		logger.Debugf("Use in-memory session store.")
 		key := securecookie.GenerateRandomKey(64)
 		return sessions.NewCookieStore(key), nil
