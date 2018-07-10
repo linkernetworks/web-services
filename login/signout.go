@@ -7,7 +7,6 @@ import (
 	"github.com/linkernetworks/logger"
 	response "github.com/linkernetworks/net/http"
 	"github.com/linkernetworks/session"
-	"github.com/linkernetworks/webservice/login/entity"
 )
 
 func (s *LoginService) signOut(req *restful.Request, resp *restful.Response) {
@@ -25,7 +24,7 @@ func (s *LoginService) signOut(req *restful.Request, resp *restful.Response) {
 		return
 	}
 
-	resp.WriteHeaderAndEntity(http.StatusOK, entity.SignInResponse{
+	resp.WriteHeaderAndEntity(http.StatusOK, SignInResponse{
 		Error:     false,
 		Message:   "Logout success",
 		SignInUrl: "/signin",

@@ -78,10 +78,10 @@ func (s *LoginService) signIn(req *restful.Request, resp *restful.Response) {
 		return
 	}
 
-	resp.WriteEntity(entity.SignInResponse{
+	resp.WriteEntity(SignInResponse{
 		Error:   false,
 		Message: "Login success",
-		Session: entity.SessionResponse{
+		Session: SessionResponse{
 			ID:    user.ID.Hex(),
 			Token: token.String(),
 		},

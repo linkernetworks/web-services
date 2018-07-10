@@ -4,7 +4,6 @@ import (
 	restful "github.com/emicklei/go-restful"
 	"github.com/linkernetworks/net/http"
 	"github.com/linkernetworks/session"
-	"github.com/linkernetworks/webservice/login/entity"
 )
 
 func (s *LoginService) me(req *restful.Request, resp *restful.Response) {
@@ -22,7 +21,7 @@ func (s *LoginService) me(req *restful.Request, resp *restful.Response) {
 		return
 
 	}
-	resp.WriteEntity(entity.SessionResponse{
+	resp.WriteEntity(SessionResponse{
 		ID:          user.ID.Hex(),
 		Token:       token,
 		ExpiredAt:   session.Values["expiredAt"].(int64),

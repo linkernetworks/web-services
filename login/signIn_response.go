@@ -1,4 +1,4 @@
-package entity
+package login
 
 type SignInResponse struct {
 	Error        bool            `json:"error"`

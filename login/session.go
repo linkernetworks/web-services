@@ -49,7 +49,7 @@ func (s *LoginService) authenticatedFilter(req *restful.Request, resp *restful.R
 		return
 	}
 
-	resp.WriteHeaderAndEntity(http.StatusForbidden, entity.SignInResponse{
+	resp.WriteHeaderAndEntity(http.StatusForbidden, SignInResponse{
 		Error:     true,
 		Message:   "Unauthorized. Redirect to signin page",
 		SignInUrl: "/signin",
