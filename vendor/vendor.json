@@ -9,10 +9,10 @@
 			"revisionTime": "2018-07-01T20:16:48Z"
 		},
 		{
-			"checksumSHA1": "4772zXrOaPVeDeSgdiV7Vp4KEjk=",
-			"path": "github.com/dgrijalva/jwt-go",
-			"revision": "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e",
-			"revisionTime": "2018-03-08T23:13:08Z"
+			"checksumSHA1": "CSPbwbyzqA6sfORicn4HFtIhF/c=",
+			"path": "github.com/davecgh/go-spew/spew",
+			"revision": "8991bc29aa16c548c550c7ff78260e27b9ab7c73",
+			"revisionTime": "2018-02-21T22:46:20Z"
 		},
 		{
 			"checksumSHA1": "QnuAzRx3UVd1VEpVmUKqrdg7ZzU=",
@@ -57,6 +57,14 @@
 			"revisionTime": "2018-06-06T15:52:11Z"
 		},
 		{
+			"checksumSHA1": "HMoZ70PrmL9dN5Kxs0dyZa/Z5k4=",
+			"path": "github.com/imdario/mergo",
+			"revision": "9316a62528ac99aaecb4e47eadd6dc8aa6533d58",
+			"revisionTime": "2018-06-08T14:01:56Z",
+			"version": "v0.3",
+			"versionExact": "v0.3.5"
+		},
+		{
 			"checksumSHA1": "66skRjpx6iDbz6OUSLwmBvPSDUs=",
 			"path": "github.com/json-iterator/go",
 			"revision": "ab8a2e0c74be9d3be70b3184d9acc634935ded82",
@@ -97,34 +105,6 @@
 			"path": "github.com/linkernetworks/net/http",
 			"revision": "946701828d6c210239143ab54cb1506fc6131d5e",
 			"revisionTime": "2018-06-19T03:23:25Z"
-		},
-		{
-			"path": "github.com/linkernetworks/oauth/app/entity",
-			"revision": ""
-		},
-		{
-			"checksumSHA1": "V89FgGKA+7A70mAedEvmhDSCIyQ=",
-			"path": "github.com/linkernetworks/oauth/entity",
-			"revision": "a7fe484fc0cf65696dd9479eb8bad1b2dd416ca9",
-			"revisionTime": "2018-05-31T10:18:20Z"
-		},
-		{
-			"checksumSHA1": "4/IfV+Mt6oezQKrcgEI1jX2n0G8=",
-			"path": "github.com/linkernetworks/oauth/util",
-			"revision": "a7fe484fc0cf65696dd9479eb8bad1b2dd416ca9",
-			"revisionTime": "2018-05-31T10:18:20Z"
-		},
-		{
-			"checksumSHA1": "4/IfV+Mt6oezQKrcgEI1jX2n0G8=",
-			"path": "github.com/linkernetworks/oauth/util",
-			"revision": "73c58d62128487d7b126176d96b4a28f6e3d437d",
-			"revisionTime": "2018-05-28T08:47:46Z"
-		},
-		{
-			"checksumSHA1": "AKLH/vvouSClTST+hT1f+2ldEu4=",
-			"path": "github.com/linkernetworks/oauth/validator",
-			"revision": "a7fe484fc0cf65696dd9479eb8bad1b2dd416ca9",
-			"revisionTime": "2018-05-31T10:18:20Z"
 		},
 		{
 			"checksumSHA1": "iBGEr+J1x9JSl/ppe3y8j94GSXo=",
@@ -175,6 +155,12 @@
 			"revisionTime": "2018-03-11T21:45:15Z"
 		},
 		{
+			"checksumSHA1": "LuFv4/jlrmFNnDb/5SCSEPAM9vU=",
+			"path": "github.com/pmezard/go-difflib/difflib",
+			"revision": "792786c7400a136282c1664665ae0a8db921c6c2",
+			"revisionTime": "2016-01-10T10:55:54Z"
+		},
+		{
 			"checksumSHA1": "sH2ehBZuEJh2Ro/Ro4BpehZmu9A=",
 			"path": "github.com/rifflock/lfshook",
 			"revision": "62f5e0662816a462697d29f396fd19376d17f65b",
@@ -191,6 +177,60 @@
 			"path": "github.com/sirupsen/logrus",
 			"revision": "e54a77765aca7bbdd8e56c1c54f60579968b2dc9",
 			"revisionTime": "2018-07-02T05:55:18Z"
+		},
+		{
+			"checksumSHA1": "XHH8+1ESYdBoyKSD4FXwdy1liUk=",
+			"path": "github.com/stretchr/objx",
+			"revision": "b8b73a35e9830ae509858c10dec5866b4d5c8bff",
+			"revisionTime": "2018-07-02T10:34:55Z"
+		},
+		{
+			"checksumSHA1": "nj123dGxKPIF17B6y3VEK2pihRk=",
+			"path": "github.com/stretchr/testify",
+			"revision": "f35b8ab0b5a2cef36673838d662e249dd9c94686",
+			"revisionTime": "2018-05-06T18:05:49Z",
+			"version": "v1",
+			"versionExact": "v1.2.2"
+		},
+		{
+			"checksumSHA1": "c6pbpF7eowwO59phRTpF8cQ80Z0=",
+			"path": "github.com/stretchr/testify/assert",
+			"revision": "f35b8ab0b5a2cef36673838d662e249dd9c94686",
+			"revisionTime": "2018-05-06T18:05:49Z",
+			"version": "v1",
+			"versionExact": "v1.2.2"
+		},
+		{
+			"checksumSHA1": "fg3TzS9/QK3wZbzei3Z6O8XPLHg=",
+			"path": "github.com/stretchr/testify/http",
+			"revision": "f35b8ab0b5a2cef36673838d662e249dd9c94686",
+			"revisionTime": "2018-05-06T18:05:49Z",
+			"version": "v1",
+			"versionExact": "v1.2.2"
+		},
+		{
+			"checksumSHA1": "WmBSFdqpdYRIkp0I408JIZ3LDMY=",
+			"path": "github.com/stretchr/testify/mock",
+			"revision": "f35b8ab0b5a2cef36673838d662e249dd9c94686",
+			"revisionTime": "2018-05-06T18:05:49Z",
+			"version": "v1",
+			"versionExact": "v1.2.2"
+		},
+		{
+			"checksumSHA1": "wnEANt4k5X/KGwoFyfSSnpxULm4=",
+			"path": "github.com/stretchr/testify/require",
+			"revision": "f35b8ab0b5a2cef36673838d662e249dd9c94686",
+			"revisionTime": "2018-05-06T18:05:49Z",
+			"version": "v1",
+			"versionExact": "v1.2.2"
+		},
+		{
+			"checksumSHA1": "uefllr2OtKBGo/kQSAPbW3w6p0A=",
+			"path": "github.com/stretchr/testify/suite",
+			"revision": "f35b8ab0b5a2cef36673838d662e249dd9c94686",
+			"revisionTime": "2018-05-06T18:05:49Z",
+			"version": "v1",
+			"versionExact": "v1.2.2"
 		},
 		{
 			"checksumSHA1": "L1vKtjhZ2Lej0kfsLaTUm7ps/Yg=",

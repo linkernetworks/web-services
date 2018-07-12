@@ -1,23 +1,21 @@
-package usersession
+package login
 
 import (
 	"net/http"
+	"time"
 
+	restful "github.com/emicklei/go-restful"
 	"github.com/linkernetworks/logger"
 	response "github.com/linkernetworks/net/http"
-	oauth "github.com/linkernetworks/oauth/entity"
-	"github.com/linkernetworks/oauth/util"
 	"github.com/linkernetworks/validator"
+	"github.com/linkernetworks/webservice/login/entity"
 	"github.com/linkernetworks/webservice/pwdutil"
-	"github.com/linkernetworks/webservice/web"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
-func SignUpUserHandler(ctx *web.Context) {
-	as, req, resp := ctx.ServiceProvider, ctx.Request, ctx.Response
+func (s *LoginService) signUp(req *restful.Request, resp *restful.Response) {
 
-	user := oauth.User{}
+	user := entity.User{}
 	if err := req.ReadEntity(&user); err != nil {
 		logger.Error(err)
 		response.BadRequest(req.Request, resp.ResponseWriter, err)
@@ -34,24 +32,13 @@ func SignUpUserHandler(ctx *web.Context) {
 		validations["lastName"] = lastNameValidate
 	}
 
-	session := as.Mongo.NewSession()
-	defer session.Close()
-
 	// Check user email validate first
 	emailValidate, err := validator.ValidateEmail(user.Email)
 	if err != nil {
 		validations["email"] = emailValidate
 	}
 	// Then Check user existed
-	query := bson.M{"email": user.Email}
-	existedUser := oauth.User{}
-	if err := session.FindOne(oauth.UserCollectionName, query, &existedUser); err != nil {
-		if err.Error() != mgo.ErrNotFound.Error() {
-			logger.Error(err)
-			response.InternalServerError(req.Request, resp.ResponseWriter, err)
-			return
-		}
-	}
+	existedUser := s.userStorage.FindByEmail(user.Email)
 	if len(existedUser.ID) > 1 {
 		emailValidate.Field = "email"
 		emailValidate.Error = true
@@ -64,7 +51,7 @@ func SignUpUserHandler(ctx *web.Context) {
 		validations["password"] = passworkValidate
 	}
 	if validations.HasError() {
-		resp.WriteHeaderAndEntity(http.StatusUnprocessableEntity, ActionResponse{
+		resp.WriteHeaderAndEntity(http.StatusUnprocessableEntity, entity.ActionResponse{
 			Error:       true,
 			Validations: validations,
 			Message:     "Input data is not valid",
@@ -73,23 +60,24 @@ func SignUpUserHandler(ctx *web.Context) {
 	}
 
 	user.ID = bson.NewObjectId()
-	user.Password, err = pwdutil.EncryptPasswordLegacy(user.Password, ctx.ServiceProvider.Config.PassSalt)
+	user.Password, err = pwdutil.EncryptPasswordLegacy(user.Password, s.passworldSalt)
 	if err != nil {
 		logger.Error(err)
 		response.InternalServerError(req.Request, resp.ResponseWriter, err)
 		return
 	}
-	user.CreatedAt = util.GetCurrentTimestamp()
+	user.CreatedAt = time.Now().Unix()
 	user.Roles = []string{"user"}
 	user.Revoked = false
-	user.JobPriority = 3000
 
-	if err := session.Insert(oauth.UserCollectionName, &user); err != nil {
+	err = s.userStorage.Save(&user)
+	if err != nil {
 		logger.Error(err)
 		response.InternalServerError(req.Request, resp.ResponseWriter, err)
 		return
 	}
-	resp.WriteEntity(ActionResponse{
+
+	resp.WriteEntity(entity.ActionResponse{
 		Error:   false,
 		Message: "Sign up success",
 	})
