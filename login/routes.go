@@ -49,7 +49,8 @@ func New(c *config.Config) (*LoginService, error) {
 		web:           &restful.WebService{},
 	}
 
-	s.web.Path("/v1").Consumes(restful.MIME_JSON, restful.MIME_JSON).Produces(restful.MIME_JSON, restful.MIME_JSON)
+	s.web.SetDynamicRoutes(true)
+	s.web.Path("/").Consumes(restful.MIME_JSON, restful.MIME_JSON).Produces(restful.MIME_JSON, restful.MIME_JSON)
 	s.web.Route(s.web.GET("/me").Filter(s.authenticatedFilter).To(s.me))
 	s.web.Route(s.web.POST("/email/check").To(s.checkEmail))
 	s.web.Route(s.web.POST("/signup").To(s.signUp))
