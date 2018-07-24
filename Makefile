@@ -18,7 +18,7 @@ build: pre-build
 
 .PHONY: test
 test: build
-	$(GO) test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
+	$(GO) test -v -race -coverprofile=coverage.txt -covermode=atomic -timeout=1m ./...
 	$(GO) tool cover -html=coverage.txt -o coverage.html
 
 .PHONY: check
