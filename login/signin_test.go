@@ -56,7 +56,7 @@ func (s *SignInTestSuite) TestSignInWithValidUser() {
 	})
 
 	// arrange: prepare HTTP request
-	req, _ := http.NewRequest("POST", "/v1/signin", strings.NewReader(`
+	req, _ := http.NewRequest("POST", "/signin", strings.NewReader(`
 		 {
 			"password": "aaaaaa",
 			"email": "user@example.com"
